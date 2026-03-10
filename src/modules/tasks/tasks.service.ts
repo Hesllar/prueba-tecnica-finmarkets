@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateTaskDto } from './dto/create-task.dto.js';
 import { QueryTasksDto } from './dto/query-tasks.dto.js';
@@ -18,6 +22,19 @@ export class TasksService {
       });
     } catch {
       throw new InternalServerErrorException('Error al obtener las tareas');
+    }
+  }
+
+  async findOne(id: string) {
+    try {
+      const task = await this.prisma.task.findUnique({ where: { id } });
+      if (!task) {
+        throw new NotFoundException(`Tarea con ID "${id}" no encontrada`);
+      }
+      return task;
+    } catch (error) {
+      if (error instanceof NotFoundException) throw error;
+      throw new InternalServerErrorException('Error al obtener la tarea');
     }
   }
 

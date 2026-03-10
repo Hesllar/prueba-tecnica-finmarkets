@@ -4,10 +4,17 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateTaskDto } from './dto/create-task.dto.js';
 import { QueryTasksDto } from './dto/query-tasks.dto.js';
 import { TasksService } from './tasks.service.js';
@@ -36,6 +43,16 @@ export class TasksController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor' })
   findAll(@Query() query: QueryTasksDto) {
     return this.tasksService.findAll(query);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Obtener una tarea por ID' })
+  @ApiParam({ name: 'id', description: 'ID de la tarea (UUID)' })
+  @ApiResponse({ status: 200, description: 'Tarea obtenida exitosamente' })
+  @ApiResponse({ status: 404, description: 'Tarea no encontrada' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor' })
+  findOne(@Param('id') id: string) {
+    return this.tasksService.findOne(id);
   }
 
   @Post()
