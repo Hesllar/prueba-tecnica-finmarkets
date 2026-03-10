@@ -19,6 +19,7 @@ import {
 import { CreateTaskDto } from './dto/create-task.dto.js';
 import { QueryTasksDto } from './dto/query-tasks.dto.js';
 import { UpdateTaskDto } from './dto/update-task.dto.js';
+import { UpdateTaskStatusDto } from './dto/update-task-status.dto.js';
 import { TasksService } from './tasks.service.js';
 import { TaskPriority, TaskStatus } from '../../../generated/prisma/enums.js';
 
@@ -66,6 +67,17 @@ export class TasksController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor' })
   update(@Param('id') id: string, @Body() dto: UpdateTaskDto) {
     return this.tasksService.update(id, dto);
+  }
+
+  @Patch(':id/status')
+  @ApiOperation({ summary: 'Cambiar el estado de una tarea' })
+  @ApiParam({ name: 'id', description: 'ID de la tarea (UUID)' })
+  @ApiResponse({ status: 200, description: 'Estado actualizado exitosamente' })
+  @ApiResponse({ status: 400, description: 'Error de validación' })
+  @ApiResponse({ status: 404, description: 'Tarea no encontrada' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor' })
+  updateStatus(@Param('id') id: string, @Body() dto: UpdateTaskStatusDto) {
+    return this.tasksService.updateStatus(id, dto);
   }
 
   @Post()
