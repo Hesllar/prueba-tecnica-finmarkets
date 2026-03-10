@@ -1,19 +1,49 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateTaskDto } from './dto/create-task.dto.js';
+import { QueryTasksDto } from './dto/query-tasks.dto.js';
 import { TasksService } from './tasks.service.js';
+import { TaskPriority, TaskStatus } from '../../../generated/prisma/enums.js';
 
 @ApiTags('Tasks')
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
+  @Get()
+  @ApiOperation({ summary: 'Listar todas las tareas con filtros opcionales' })
+  @ApiQuery({
+    name: 'status',
+    enum: TaskStatus,
+    required: false,
+    description: 'Filtrar por estado',
+  })
+  @ApiQuery({
+    name: 'priority',
+    enum: TaskPriority,
+    required: false,
+    description: 'Filtrar por prioridad',
+  })
+  @ApiResponse({ status: 200, description: 'Tareas obtenidas exitosamente' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor' })
+  findAll(@Query() query: QueryTasksDto) {
+    return this.tasksService.findAll(query);
+  }
+
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ summary: 'Create a new task' })
-  @ApiResponse({ status: 201, description: 'Task created successfully' })
-  @ApiResponse({ status: 400, description: 'Validation error' })
-  @ApiResponse({ status: 500, description: 'Internal server error' })
+  @ApiOperation({ summary: 'Crear una nueva tarea' })
+  @ApiResponse({ status: 201, description: 'Tarea creada exitosamente' })
+  @ApiResponse({ status: 400, description: 'Error de validación' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor' })
   create(@Body() dto: CreateTaskDto) {
     return this.tasksService.create(dto);
   }

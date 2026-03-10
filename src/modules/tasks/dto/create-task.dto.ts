@@ -12,13 +12,15 @@ import {
 } from '../../../../generated/prisma/enums.js';
 
 export class CreateTaskDto {
-  @ApiProperty({ example: 'Implement login feature' })
+  @ApiProperty({ example: 'Implementar funcionalidad de login' })
   @IsString()
   @IsNotEmpty()
   @MaxLength(255)
   title: string;
 
-  @ApiPropertyOptional({ example: 'Create JWT-based authentication flow' })
+  @ApiPropertyOptional({
+    example: 'Crear flujo de autenticación basado en JWT',
+  })
   @IsString()
   @IsOptional()
   @MaxLength(1000)
