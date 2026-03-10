@@ -73,6 +73,15 @@ export class TasksService {
     }
   }
 
+  async remove(id: string) {
+    await this.findOne(id);
+    try {
+      await this.prisma.task.delete({ where: { id } });
+    } catch {
+      throw new InternalServerErrorException('Error al eliminar la tarea');
+    }
+  }
+
   async create(dto: CreateTaskDto) {
     try {
       return await this.prisma.task.create({

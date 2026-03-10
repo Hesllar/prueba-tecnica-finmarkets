@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -78,6 +79,17 @@ export class TasksController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor' })
   updateStatus(@Param('id') id: string, @Body() dto: UpdateTaskStatusDto) {
     return this.tasksService.updateStatus(id, dto);
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Eliminar una tarea por ID' })
+  @ApiParam({ name: 'id', description: 'ID de la tarea (UUID)' })
+  @ApiResponse({ status: 204, description: 'Tarea eliminada exitosamente' })
+  @ApiResponse({ status: 404, description: 'Tarea no encontrada' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor' })
+  remove(@Param('id') id: string) {
+    return this.tasksService.remove(id);
   }
 
   @Post()
