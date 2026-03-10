@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -17,6 +18,7 @@ import {
 } from '@nestjs/swagger';
 import { CreateTaskDto } from './dto/create-task.dto.js';
 import { QueryTasksDto } from './dto/query-tasks.dto.js';
+import { UpdateTaskDto } from './dto/update-task.dto.js';
 import { TasksService } from './tasks.service.js';
 import { TaskPriority, TaskStatus } from '../../../generated/prisma/enums.js';
 
@@ -53,6 +55,17 @@ export class TasksController {
   @ApiResponse({ status: 500, description: 'Error interno del servidor' })
   findOne(@Param('id') id: string) {
     return this.tasksService.findOne(id);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Actualizar una tarea por ID' })
+  @ApiParam({ name: 'id', description: 'ID de la tarea (UUID)' })
+  @ApiResponse({ status: 200, description: 'Tarea actualizada exitosamente' })
+  @ApiResponse({ status: 400, description: 'Error de validación' })
+  @ApiResponse({ status: 404, description: 'Tarea no encontrada' })
+  @ApiResponse({ status: 500, description: 'Error interno del servidor' })
+  update(@Param('id') id: string, @Body() dto: UpdateTaskDto) {
+    return this.tasksService.update(id, dto);
   }
 
   @Post()

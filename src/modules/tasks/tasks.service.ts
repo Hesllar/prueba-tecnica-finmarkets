@@ -6,6 +6,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateTaskDto } from './dto/create-task.dto.js';
 import { QueryTasksDto } from './dto/query-tasks.dto.js';
+import { UpdateTaskDto } from './dto/update-task.dto.js';
 
 @Injectable()
 export class TasksService {
@@ -35,6 +36,25 @@ export class TasksService {
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
       throw new InternalServerErrorException('Error al obtener la tarea');
+    }
+  }
+
+  async update(id: string, dto: UpdateTaskDto) {
+    await this.findOne(id);
+    try {
+      return await this.prisma.task.update({
+        where: { id },
+        data: {
+          ...(dto.title !== undefined && { title: dto.title }),
+          ...(dto.description !== undefined && {
+            description: dto.description,
+          }),
+          ...(dto.status !== undefined && { status: dto.status }),
+          ...(dto.priority !== undefined && { priority: dto.priority }),
+        },
+      });
+    } catch {
+      throw new InternalServerErrorException('Error al actualizar la tarea');
     }
   }
 
